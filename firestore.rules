@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/clients/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /clients/{clientId} {
+      allow read: if isSignedIn() && (request.auth.uid == clientId || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == clientId;
+      // Só o próprio cliente atualiza os seus dados, e nunca o campo "role" —
+      // promover a admin só é feito por outro admin (ver AdminClients.jsx) ou na consola Firebase.
+      allow update: if isSignedIn() && (
+        (request.auth.uid == clientId && request.resource.data.role == resource.data.role) ||
+        isAdmin()
+      );
+    }
+
+    match /tickets/{ticketId} {
+      allow read: if isSignedIn() && (resource.data.clientId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && request.resource.data.clientId == request.auth.uid;
+      allow update: if isAdmin(); // só o admin muda o estado de um ticket
+      allow delete: if false;
+    }
+
+    match /invoices/{invoiceId} {
+      allow read: if isSignedIn() && (resource.data.clientId == request.auth.uid || isAdmin());
+      // Facturas só são criadas/alteradas pelo admin ou pelo backend (Cloud Functions).
+      allow write: if isAdmin();
+    }
+  }
+}
