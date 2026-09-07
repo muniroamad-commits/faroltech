@@ -25,7 +25,8 @@ export default function AdminInvoices() {
   }
 
   async function markPaid(id) {
-    await updateDoc(doc(db, 'invoices', id), { status: 'paid', method: 'Manual (admin)', paidAt: new Date() })
+    const method = prompt('Como foi pago? (ex: M-Pesa, e-Mola, Transferência)', 'M-Pesa') || 'Confirmado manualmente'
+    await updateDoc(doc(db, 'invoices', id), { status: 'paid', method, paidAt: new Date() })
   }
 
   return (

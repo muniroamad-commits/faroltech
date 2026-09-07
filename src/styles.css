@@ -74,6 +74,7 @@ button{ font-family:'Inter',sans-serif; cursor:pointer;}
 .pay-buttons button{ background:var(--navy); color:#fff; border:none; padding:7px 14px; border-radius:4px; font-size:0.82rem;}
 .pay-buttons button:hover{ background:var(--navy-deep);}
 .receipt-btn{ background:var(--green); color:#fff; border:none; padding:7px 14px; border-radius:4px; font-size:0.82rem; text-decoration:none;}
+.pay-note{ font-size:0.82rem; opacity:0.7; max-width:320px; text-align:right;}
 
 /* Recibo */
 .receipt-page{ min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--sand); padding:20px;}
